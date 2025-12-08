@@ -2,6 +2,8 @@
 
 The eternal battle between day and night, good and bad comes to the Atari ST!
 
+https://github.com/user-attachments/assets/8378a85a-a70d-4113-8bfe-06eb0ac4c6c5
+
 ## Run
 
 Copy `PONGWARS.TOS` to your Atari ST and run it. That's it!
