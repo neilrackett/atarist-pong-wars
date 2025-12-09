@@ -22,9 +22,11 @@
 #define WORDS_PER_LINE ((SCREEN_WIDTH / 16) * PLANES) /* 20 * 4 = 80 */
 #define SCREEN_BYTES (WORDS_PER_LINE * SCREEN_HEIGHT * 2)
 
+#define SPLASH_DELAY 0 /* frames, e.g. 50 = 1 second at 50Hz */
+
 #define GRID_SIZE 10
 #define SQUARE_SIZE 20                        /* pixels */
-#define GAME_PIXELS (GRID_SIZE * SQUARE_SIZE) /* Result should be 200 */
+#define GAME_PIXELS (GRID_SIZE * SQUARE_SIZE) /* result should be 200 */
 
 #define GAME_LEFT ((SCREEN_WIDTH - GAME_PIXELS) / 2)
 #define GAME_TOP ((SCREEN_HEIGHT - GAME_PIXELS) / 2)
@@ -99,6 +101,15 @@ typedef struct
 
 static Ball balls[2];
 
+/* --- Forward declarations ------------------------------------------- */
+
+static void clear_screen(void);
+static void init_board(void);
+static void drawSquares(void);
+static void init_balls(void);
+static void drawBall(const Ball *ball);
+static void draw_counters(void);
+
 /* --- Digit font (5x7) ---------------------------------------------- */
 
 static const unsigned char digit_font[10][DIGIT_HEIGHT] = {
@@ -170,14 +181,12 @@ static int load_and_display_pi1(const char *filename)
   unsigned short *pi1_palette;
   unsigned char *pi1_image;
 
-  /* Open file */
   handle = Fopen(filename, 0); /* read-only */
   if (handle < 0)
   {
     return -1; /* error */
   }
 
-  /* Read header + palette + image */
   bytes_read = Fread(handle, sizeof(pi1_buffer), pi1_buffer);
   Fclose(handle);
 
@@ -204,17 +213,30 @@ static int load_and_display_pi1(const char *filename)
   return 0;
 }
 
-static void show_splash(void)
+static void init_game(void)
 {
-  if (load_and_display_pi1("PONGWARS.PI1") == 0)
+  load_and_display_pi1("PONGWARS.PI1");
+
+  /* Initialise game while splash is displayed */
+  screen = framebuffer;
+  clear_screen();
+  init_board();
+  drawSquares();
+  init_balls();
+  drawBall(&balls[0]);
+  drawBall(&balls[1]);
+  draw_counters();
+
+  /* Show splash screen for a few seconds */
+  int i;
+  for (i = 0; i < SPLASH_DELAY; ++i)
   {
-    /* Wait 3 seconds (150 frames at 50Hz) */
-    int i;
-    for (i = 0; i < 150; ++i)
-    {
-      Vsync();
-    }
+    Vsync();
   }
+
+  /* Set game palette and present the initialized game screen */
+  set_game_palette();
+  memcpy(phys_screen, screen, SCREEN_BYTES);
 }
 
 /* --- Low-level drawing: put_pixel, fill_rect, clear_screen --------- */
@@ -745,23 +767,10 @@ int main(void)
   save_palette();
 
   phys_screen = (unsigned char *)Physbase(); /* XBIOS 2 */
-  show_splash();
-  set_game_palette();
-  screen = framebuffer; /* draw into offscreen buffer */
-  clear_screen();
+  init_game();
 
   /* Hide VT52 cursor (ESC f) */
   Cconws("\033f");
-
-  init_board();
-  drawSquares();
-  init_balls();
-  drawBall(&balls[0]);
-  drawBall(&balls[1]);
-  draw_counters();
-
-  /* Present initial frame */
-  memcpy(phys_screen, screen, SCREEN_BYTES);
 
   for (;;)
   {
