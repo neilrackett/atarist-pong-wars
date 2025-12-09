@@ -45,6 +45,9 @@
 #define RIGHT_SCORE_X (GAME_LEFT + GAME_PIXELS + (SCORE_AREA_WIDTH - MAX_SCORE_WIDTH) / 2 + DIGIT_WIDTH)
 #define SCORE_CENTER_Y (SCREEN_HEIGHT / 2)
 
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 /* --- Colour indices and palette ------------------------------------ */
 /* ST palette format: 0b0000 rrr0 ggg0 bbb0 (3 bits per component) */
 
@@ -79,6 +82,7 @@ static unsigned short old_palette[16];          /* saved palette for restore on 
 static int squares[GRID_SIZE][GRID_SIZE];
 static long dayScore = 0;
 static long nightScore = 0;
+static int scores_changed = 1; /* flag to redraw scores only when changed */
 
 static long iteration = 0; /* not displayed, just for fun */
 
@@ -231,6 +235,7 @@ static void init_board(void)
       }
     }
   }
+  scores_changed = 1;
 }
 
 static void draw_cell(int gx, int gy)
