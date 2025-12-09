@@ -649,13 +649,19 @@ static void draw(void)
 
 int main(void)
 {
-  int rez = Getrez(); /* 0 = low, 1 = medium, 2 = high */
+  int prev_rez = Getrez(); /* 0 = low, 1 = medium, 2 = high */
+  int rez = prev_rez;
 
-  /* Only run in low resolution */
   if (rez != 0)
   {
-    Cconws("PONGWARS requires low resolution (320x200, 16 colours).\r\n");
-    return 0;
+    /* Switch to low res (0) */
+    Setscreen(-1L, -1L, 0);
+    rez = Getrez();
+    if (rez != 0)
+    {
+      Cconws("Pong Wars requires ST low res:\r\nplease switch to low res and try again.\r\n");
+      return 0;
+    }
   }
 
   save_palette();
@@ -697,6 +703,12 @@ int main(void)
   }
 
   restore_palette();
+
+  if (prev_rez != rez)
+  {
+    Setscreen(-1L, -1L, prev_rez);
+  }
+
   /* Show cursor again (ESC e) */
   Cconws("\033e");
 
