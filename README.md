@@ -6,7 +6,7 @@ https://github.com/user-attachments/assets/8378a85a-a70d-4113-8bfe-06eb0ac4c6c5
 
 ## Run
 
-Copy `PONGWARS.TOS` to your Atari ST and run it. That's it!
+Copy `PONGWARS.TOS` and `PONGWARS.PI1` to your Atari ST and run it. That's it!
 
 ## Build
 
@@ -14,7 +14,7 @@ Copy `PONGWARS.TOS` to your Atari ST and run it. That's it!
 1. Open the command line and navigate to the project directory
 1. Run `` export ST_WORKING_FOLDER=`pwd` ``
 1. Run `stcmd make` to compile the code
-1. Copy `PONGWARS.TOS` to your Atari ST and run it
+1. Copy `PONGWARS.TOS` and `PONGWARS.PI1` to your Atari ST and run it
 
 ## Credits
 

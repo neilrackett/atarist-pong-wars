@@ -1,15 +1,13 @@
 /**
  * PONGWARS.TOS - Pong Wars for Atari ST
  *
- * Inspired by https://github.com/vnglst/pong-wars
- *
- * - Runs in low resolution (320x200)
+ * - Runs in ST low resolution (320x200)
  * - 200x200 game area, centred horizontally
  * - Left half = "day", right half = "night"
  * - Day & night counters in white text to left/right
  * - ESC key to exit
  *
- * @author  Neil Rackett (https://github.com/neilrackett)
+ * @author  Neil Rackett <https://github.com/neilrackett>
  */
 
 #include <osbind.h> /* TOS BIOS/XBIOS/GEMDOS bindings */
@@ -77,6 +75,7 @@ static unsigned char *screen;                   /* offscreen drawing buffer */
 static unsigned char *phys_screen;              /* physical screen base address */
 static unsigned char framebuffer[SCREEN_BYTES]; /* offscreen frame buffer */
 static unsigned short old_palette[16];          /* saved palette for restore on exit */
+static unsigned char pi1_buffer[34 + 32000];    /* buffer for PI1 file data */
 
 /* Territory grid ("squares") */
 static int squares[GRID_SIZE][GRID_SIZE];
@@ -160,6 +159,62 @@ static void set_game_palette(void)
   Setcolor(DAY_BALL_COLOR, ST_COLOR(1, 2, 3));   /* dark ball (day) */
   Setcolor(NIGHT_BALL_COLOR, ST_COLOR(6, 7, 6)); /* light ball (night) */
   Setcolor(COLOR_TEXT, ST_COLOR(7, 7, 7));       /* white           */
+}
+
+/* --- PI1 Splash Screen ---------------------------------------------- */
+
+static int load_and_display_pi1(const char *filename)
+{
+  long handle;
+  long bytes_read;
+  unsigned short *pi1_palette;
+  unsigned char *pi1_image;
+
+  /* Open file */
+  handle = Fopen(filename, 0); /* read-only */
+  if (handle < 0)
+  {
+    return -1; /* error */
+  }
+
+  /* Read header + palette + image */
+  bytes_read = Fread(handle, sizeof(pi1_buffer), pi1_buffer);
+  Fclose(handle);
+
+  if (bytes_read != sizeof(pi1_buffer))
+  {
+    return -1; /* error */
+  }
+
+  /* PI1 format: 2 bytes resolution (skip), 32 bytes palette (16 words), then 32000 bytes image */
+  pi1_palette = (unsigned short *)(pi1_buffer + 2);
+  pi1_image = pi1_buffer + 34;
+
+  /* Set PI1 palette */
+  {
+    int i;
+    for (i = 0; i < 16; ++i)
+    {
+      Setcolor(i, pi1_palette[i]);
+    }
+  }
+
+  memcpy(phys_screen, pi1_image, 32000);
+
+  return 0;
+}
+
+static void show_splash(void)
+{
+  if (load_and_display_pi1("PONGWARS.PI1") == 0)
+  {
+    /* Wait 3 seconds (150 frames at 50Hz) */
+    int i;
+    for (i = 0; i < 150; ++i)
+    {
+      Vsync();
+    }
+  }
 }
 
 /* --- Low-level drawing: put_pixel, fill_rect, clear_screen --------- */
@@ -688,10 +743,11 @@ int main(void)
   }
 
   save_palette();
-  set_game_palette();
 
   phys_screen = (unsigned char *)Physbase(); /* XBIOS 2 */
-  screen = framebuffer;                      /* draw into offscreen buffer */
+  show_splash();
+  set_game_palette();
+  screen = framebuffer; /* draw into offscreen buffer */
   clear_screen();
 
   /* Hide VT52 cursor (ESC f) */
