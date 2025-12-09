@@ -311,6 +311,7 @@ static void paint_cell(int gx, int gy, int owner)
   }
 
   draw_cell(gx, gy);
+  scores_changed = 1;
 }
 
 /* --- Balls ---------------------------------------------------------- */
@@ -337,37 +338,50 @@ static void init_balls(void)
 /* Erase ball by redrawing underlying territory pixels */
 static void eraseBall(const Ball *ball)
 {
-  int xx, yy;
-  for (yy = 0; yy < BALL_SIZE; ++yy)
+  int min_gx = ball->x / SQUARE_SIZE;
+  int max_gx = (ball->x + BALL_SIZE - 1) / SQUARE_SIZE;
+  int min_gy = ball->y / SQUARE_SIZE;
+  int max_gy = (ball->y + BALL_SIZE - 1) / SQUARE_SIZE;
+
+  int gy, gx;
+  for (gy = min_gy; gy <= max_gy; ++gy)
   {
-    int gy = (ball->y + yy) / SQUARE_SIZE;
-    if (gy < 0 || gy >= GRID_SIZE)
-      continue;
-
-    int sy = GAME_TOP + ball->y + yy;
-
-    for (xx = 0; xx < BALL_SIZE; ++xx)
+    for (gx = min_gx; gx <= max_gx; ++gx)
     {
-      int gx = (ball->x + xx) / SQUARE_SIZE;
-      int sx = GAME_LEFT + ball->x + xx;
-      int owner = COLOR_BG;
-      if (gx >= 0 && gx < GRID_SIZE && gy >= 0 && gy < GRID_SIZE)
+      int cell_owner = (gx >= 0 && gx < GRID_SIZE && gy >= 0 && gy < GRID_SIZE) ? squares[gy][gx] : COLOR_BG;
+      int cell_color = COLOR_BG;
+      if (cell_owner == OWNER_DAY)
       {
-        int cellOwner = squares[gy][gx];
-        if (cellOwner == OWNER_DAY)
-        {
-          owner = DAY_COLOR;
-        }
-        else if (cellOwner == OWNER_NIGHT)
-        {
-          owner = NIGHT_COLOR;
-        }
-        else
-        {
-          owner = COLOR_BG;
-        }
+        cell_color = DAY_COLOR;
       }
-      put_pixel(sx, sy, owner);
+      else if (cell_owner == OWNER_NIGHT)
+      {
+        cell_color = NIGHT_COLOR;
+      }
+
+      int cell_left = gx * SQUARE_SIZE;
+      int cell_top = gy * SQUARE_SIZE;
+      int cell_right = cell_left + SQUARE_SIZE - 1;
+      int cell_bottom = cell_top + SQUARE_SIZE - 1;
+
+      int ball_left = ball->x;
+      int ball_top = ball->y;
+      int ball_right = ball_left + BALL_SIZE - 1;
+      int ball_bottom = ball_top + BALL_SIZE - 1;
+
+      int overlap_left = MAX(cell_left, ball_left);
+      int overlap_top = MAX(cell_top, ball_top);
+      int overlap_right = MIN(cell_right, ball_right);
+      int overlap_bottom = MIN(cell_bottom, ball_bottom);
+
+      if (overlap_left <= overlap_right && overlap_top <= overlap_bottom)
+      {
+        int overlap_x = GAME_LEFT + overlap_left;
+        int overlap_y = GAME_TOP + overlap_top;
+        int overlap_w = overlap_right - overlap_left + 1;
+        int overlap_h = overlap_bottom - overlap_top + 1;
+        fill_rect(overlap_x, overlap_y, overlap_w, overlap_h, cell_color);
+      }
     }
   }
 }
@@ -645,7 +659,11 @@ static void draw(void)
   }
 
   /* Update counters */
-  draw_counters();
+  if (scores_changed)
+  {
+    draw_counters();
+    scores_changed = 0;
+  }
 
   iteration++;
 }
