@@ -4,7 +4,7 @@
 
 The eternal battle between day and night, good and bad comes to the Atari ST!
 
-https://github.com/user-attachments/assets/4f5e1270-b6f9-4fb0-be8d-2e1705323438
+https://github.com/user-attachments/assets/8f2ab22e-a397-40c1-9b8c-c0ab480bc12b
 
 ## Run
 
