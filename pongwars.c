@@ -215,6 +215,11 @@ static int load_and_display_pi1(const char *filename)
 
 static void init_game(void)
 {
+  phys_screen = (unsigned char *)Physbase(); /* XBIOS 2 */
+
+  /* Hide VT52 cursor (ESC f) */
+  Cconws("\033f");
+
   load_and_display_pi1("PONGWARS.PI1");
 
   /* Initialise game while splash is displayed */
@@ -678,9 +683,6 @@ static void draw(void)
 {
   int i;
 
-  /* Overdraw cursor area each frame just in case */
-  fill_rect(0, 0, 8, 16, COLOR_BG);
-
   /* Erase balls at old positions by redrawing underlying cells */
   for (i = 0; i < 2; ++i)
   {
@@ -745,6 +747,12 @@ static void draw(void)
   iteration++;
 }
 
+static void dispose(void)
+{
+  /* Show cursor again (ESC e) */
+  Cconws("\033e");
+}
+
 /* --- Main ----------------------------------------------------------- */
 
 int main(void)
@@ -765,12 +773,7 @@ int main(void)
   }
 
   save_palette();
-
-  phys_screen = (unsigned char *)Physbase(); /* XBIOS 2 */
   init_game();
-
-  /* Hide VT52 cursor (ESC f) */
-  Cconws("\033f");
 
   for (;;)
   {
@@ -797,8 +800,7 @@ int main(void)
     Setscreen(-1L, -1L, prev_rez);
   }
 
-  /* Show cursor again (ESC e) */
-  Cconws("\033e");
+  dispose();
 
   return 0;
 }
