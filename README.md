@@ -1,4 +1,3 @@
-
 <img width="1536" height="1024" alt="pongwars" src="https://github.com/user-attachments/assets/c19c5b5d-ef1a-4ea3-9ee7-eeb0c657e1fc" />
 
 # Pong Wars
@@ -9,8 +8,10 @@ https://github.com/user-attachments/assets/4f5e1270-b6f9-4fb0-be8d-2e1705323438
 
 ## Run
 
-* Copy `PONGWARS.TOS` and `PONGWARS.PI1` to your Atari ST and run it.
-* Press Esc to quit.
+- Copy `PONGWARS.TOS` and `PONGWARS.PI1` to your Atari ST and run it.
+- Press Esc to quit.
+
+Don't have a real Atari ST? Try it from drive C of our [Atari ST in 3D](https://labs.mesmotronic.com/atari-st)!
 
 ## Build
 
@@ -22,8 +23,8 @@ https://github.com/user-attachments/assets/4f5e1270-b6f9-4fb0-be8d-2e1705323438
 
 ## Credits
 
-* Created by [Neil Rackett](https://x.com/neilrackett)
-* Inspired by [Pong Wars by vnglst](https://github.com/vnglst/pong-wars)
+- Created by [Neil Rackett](https://x.com/neilrackett)
+- Inspired by [Pong Wars by vnglst](https://github.com/vnglst/pong-wars)
 
 ## License
 
