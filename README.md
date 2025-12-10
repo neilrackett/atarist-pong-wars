@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/3f3369e2-8143-4aa0-ae62-3fae156615eb
 - Copy `PONGWARS.TOS` and `PONGWARS.PI1` to your Atari ST and run it.
 - Press Esc to quit.
 
-Don't have a real Atari ST? Try it from drive C of our [Atari ST in 3D](https://labs.mesmotronic.com/atari-st)!
+Don't have a real Atari ST? Try it from drive C of our [Atari ST in 3D](https://labs.mesmotronic.com/atari-st) or download a bootable disk image for your favourite emulator on the [releases](https://github.com/neilrackett/atarist-pong-wars/releases) page.
 
 ## Build
 
