@@ -8,10 +8,14 @@ https://github.com/user-attachments/assets/3f3369e2-8143-4aa0-ae62-3fae156615eb
 
 ## Run
 
-- Copy `PONGWARS.TOS` and `PONGWARS.PI1` to your Atari ST and run it.
-- Press Esc to quit.
+The latest version of Pong Wars is available for download from the [releases](https://github.com/neilrackett/atarist-pong-wars/releases) page, where you can:
 
-Don't have a real Atari ST? Try it from drive C of our [Atari ST in 3D](https://labs.mesmotronic.com/atari-st) or download a bootable disk image for your favourite emulator on the [releases](https://github.com/neilrackett/atarist-pong-wars/releases) page.
+- Copy `PONGWARS.TOS` and `PONGWARS.PI1` to your floppy or hard disk; _or_
+- Use the `PONGWARS.ST` bootable disk image with your favourite emulator
+
+Alternatively, try it online from drive C of our [Atari ST in 3D](https://labs.mesmotronic.com/atari-st).
+
+Press Esc to quit.
 
 ## Build
 
@@ -19,7 +23,7 @@ Don't have a real Atari ST? Try it from drive C of our [Atari ST in 3D](https://
 1. Open the command line and navigate to the project directory
 1. Run `` export ST_WORKING_FOLDER=`pwd` ``
 1. Run `stcmd make` to compile the code
-1. Copy `PONGWARS.TOS` and `PONGWARS.PI1` to your Atari ST and run it
+1. Files will be created in the `build` folder
 
 ## Credits
 

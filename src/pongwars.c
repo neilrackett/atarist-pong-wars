@@ -749,6 +749,11 @@ static void draw(void)
 
 static void dispose(void)
 {
+  clear_screen();
+  memcpy(phys_screen, screen, SCREEN_BYTES);
+
+  restore_palette();
+
   /* Show cursor again (ESC e) */
   Cconws("\033e");
 }
@@ -793,14 +798,12 @@ int main(void)
     }
   }
 
-  restore_palette();
+  dispose();
 
   if (prev_rez != rez)
   {
     Setscreen(-1L, -1L, prev_rez);
   }
-
-  dispose();
 
   return 0;
 }
