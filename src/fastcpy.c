@@ -10,8 +10,11 @@ static int has_blitter = -1;
 static int compute_has_blitter(void)
 {
   long mode = Blitmode(-1); /* XBIOS #64 */
-  return (mode & 2) != 0;   /* bit 1 = blitter present */
+  return (mode & 1) != 0;   /* bit 0 = blitter hardware present */
 }
+
+/* Blitter can only access ST-RAM (below 16MB) */
+#define IS_ST_RAM(p) ((unsigned long)(p) < 0x01000000UL)
 
 void *fastcpy(void *dst, const void *src, size_t n)
 {
@@ -20,8 +23,9 @@ void *fastcpy(void *dst, const void *src, size_t n)
     has_blitter = compute_has_blitter();
   }
 
-  // Use blitter if available and word-aligned
-  if (n >= 256 && has_blitter && ((((long)src | (long)dst | n) & 1) == 0))
+  // Use blitter if available, word-aligned, and buffers are in ST-RAM
+  if (n >= 256 && has_blitter && ((((long)src | (long)dst | n) & 1) == 0) &&
+      IS_ST_RAM(src) && IS_ST_RAM(dst))
   {
     const size_t CHUNK_SIZE = 4096; /* Process in chunks to allow interrupts */
     size_t remaining = n;
