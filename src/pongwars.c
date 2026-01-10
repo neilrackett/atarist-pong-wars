@@ -12,6 +12,7 @@
 
 #include <osbind.h> /* TOS BIOS/XBIOS/GEMDOS bindings */
 #include <string.h> /* memset */
+#include "fastcpy.h"
 
 /* --- Screen/geometry constants ------------------------------------- */
 
@@ -208,7 +209,7 @@ static int load_and_display_pi1(const char *filename)
     }
   }
 
-  memcpy(phys_screen, pi1_image, 32000);
+  fastcpy(phys_screen, pi1_image, 32000);
 
   return 0;
 }
@@ -241,7 +242,7 @@ static void init_game(void)
 
   /* Set game palette and present the initialized game screen */
   set_game_palette();
-  memcpy(phys_screen, screen, SCREEN_BYTES);
+  fastcpy(phys_screen, screen, SCREEN_BYTES);
 }
 
 /* --- Low-level drawing: put_pixel, fill_rect, clear_screen --------- */
@@ -479,6 +480,56 @@ static void drawBall(const Ball *ball)
 }
 
 /**
+ * Slightly vary the bounce angle while maintaining overall velocity.
+ */
+static void perturb_velocity(Ball *ball)
+{
+  /* 50% chance to vary angle */
+  if (Random() & 1)
+  {
+    int ax = (ball->vx < 0) ? -ball->vx : ball->vx;
+    int ay = (ball->vy < 0) ? -ball->vy : ball->vy;
+
+    if (Random() & 1)
+    {
+      ax++;
+      ay--;
+    }
+    else
+    {
+      ax--;
+      ay++;
+    }
+
+    /* Clamp to maintain approximate velocity */
+    /* Range [4, 11] keeps speed squared between ~113 and ~137 */
+    if (ax < 4)
+    {
+      ax = 4;
+      ay = 11;
+    }
+    if (ay < 4)
+    {
+      ay = 4;
+      ax = 11;
+    }
+    if (ax > 11)
+    {
+      ax = 11;
+      ay = 4;
+    }
+    if (ay > 11)
+    {
+      ay = 11;
+      ax = 4;
+    }
+
+    ball->vx = (ball->vx < 0) ? -ax : ax;
+    ball->vy = (ball->vy < 0) ? -ay : ay;
+  }
+}
+
+/**
  * Reflect off outer edges of the 200x200 game area.
  */
 static void checkBoundaryCollision(Ball *ball)
@@ -486,10 +537,12 @@ static void checkBoundaryCollision(Ball *ball)
   if (ball->x + ball->vx < 0 || ball->x + BALL_SIZE + ball->vx > GAME_PIXELS)
   {
     ball->vx = -ball->vx;
+    perturb_velocity(ball);
   }
   if (ball->y + ball->vy < 0 || ball->y + BALL_SIZE + ball->vy > GAME_PIXELS)
   {
     ball->vy = -ball->vy;
+    perturb_velocity(ball);
   }
 }
 
@@ -533,6 +586,8 @@ static void checkSquareCollision(Ball *ball, int old_gx, int old_gy)
         ball->vx = -ball->vx; /* corner/ambiguous */
         ball->vy = -ball->vy;
       }
+
+      perturb_velocity(ball);
     }
   }
   else
@@ -750,7 +805,7 @@ static void draw(void)
 static void dispose(void)
 {
   clear_screen();
-  memcpy(phys_screen, screen, SCREEN_BYTES);
+  fastcpy(phys_screen, screen, SCREEN_BYTES);
 
   restore_palette();
 
@@ -762,6 +817,7 @@ static void dispose(void)
 
 int main(void)
 {
+  long old_stack;
   int prev_rez = Getrez(); /* 0 = low, 1 = medium, 2 = high */
   int rez = prev_rez;
 
@@ -777,6 +833,8 @@ int main(void)
     }
   }
 
+  old_stack = Super(0);
+
   save_palette();
   init_game();
 
@@ -785,7 +843,7 @@ int main(void)
     draw();
     Vsync(); /* frame pacing, then present fully rendered frame */
 
-    memcpy(phys_screen, screen, SCREEN_BYTES);
+    fastcpy(phys_screen, screen, SCREEN_BYTES);
 
     /* ESC to quit */
     if (Cconis())
@@ -799,6 +857,8 @@ int main(void)
   }
 
   dispose();
+
+  Super((void *)old_stack);
 
   if (prev_rez != rez)
   {
