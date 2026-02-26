@@ -14,18 +14,28 @@ PONGWARS_TARGET := PONGWARS.TOS
 PONGWARS_SPLASH := PONGWARS.PI1
 PONGWARS_SRC := pongwars.c fastcpy.c
 
+PONGWRS2_TARGET := PONGWRS2.TOS
+PONGWRS2_SPLASH := PONGWRS2.PI1
+PONGWRS2_SRC := pongwars_overscan.c overscan_ste_vertical.s fastcpy.c
+
 LOADER_TARGET := LOADER.PRG
 LOADER_SRC := loader.c
 
 # Rules
 
-all: $(PONGWARS_TARGET) $(LOADER_TARGET)
+all: $(PONGWARS_TARGET) $(PONGWRS2_TARGET) $(LOADER_TARGET)
 
 $(PONGWARS_TARGET):
 	@echo "Building $@..."
 	mkdir -p $(BUILD_DIR)
 	cp $(SRC_DIR)/$(PONGWARS_SPLASH) $(BUILD_DIR)/$(PONGWARS_SPLASH)
 	$(CC) $(CFLAGS) $(addprefix $(SRC_DIR)/,$(PONGWARS_SRC)) -o $(BUILD_DIR)/$(PONGWARS_TARGET) $(LDFLAGS)
+
+$(PONGWRS2_TARGET):
+	@echo "Building $@..."
+	mkdir -p $(BUILD_DIR)
+	cp $(SRC_DIR)/$(PONGWRS2_SPLASH) $(BUILD_DIR)/$(PONGWRS2_SPLASH)
+	$(CC) $(CFLAGS) $(addprefix $(SRC_DIR)/,$(PONGWRS2_SRC)) -o $(BUILD_DIR)/$(PONGWRS2_TARGET) $(LDFLAGS)
 
 $(LOADER_TARGET):
 	@echo "Building $@..."
@@ -36,4 +46,4 @@ clean:
 	@echo "Cleaning..."
 	rm -rf $(BUILD_DIR)/*
 
-.PHONY: all clean
+.PHONY: all clean $(PONGWARS_TARGET) $(PONGWRS2_TARGET) $(LOADER_TARGET)

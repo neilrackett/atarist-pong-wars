@@ -1,17 +1,17 @@
-<img width="1536" height="1024" alt="pongwars" src="https://github.com/user-attachments/assets/c19c5b5d-ef1a-4ea3-9ee7-eeb0c657e1fc" />
+<img width="1536" height="1024" alt="pongwars2-original" src="https://github.com/user-attachments/assets/2072fb87-1a93-4554-b6f4-3dbe827b7778" />
 
-# Pong Wars
+# Pong Wars for Atari ST
 
 The eternal battle between day and night, good and bad comes to the Atari ST!
 
-https://github.com/user-attachments/assets/3f3369e2-8143-4aa0-ae62-3fae156615eb
+<video src="https://github.com/user-attachments/assets/92aec3f7-9574-4dc2-a4f0-ad8c9c02abbe" width="828" height="546" autoplay muted controls loop></video>
+
+- Pong Wars - The original version for any ST or STE
+- Pong Wars 2: Overdrive - A brand-new STE-exclusive that uses overscan to take the action right to the edge of your screen
 
 ## Run
 
-The latest version of Pong Wars is available for download from the [releases](https://github.com/neilrackett/atarist-pong-wars/releases) page, where you can:
-
-- Copy `PONGWARS.TOS` and `PONGWARS.PI1` to your floppy or hard disk; _or_
-- Use the `PONGWARS.ST` bootable disk image with your favourite emulator
+Both the original _Pong Wars_ and _Pong Wars 2: Overdrive_ are available from the [releases](https://github.com/neilrackett/atarist-pongwars/releases) page, where you can download the individual files or bootable disk images.
 
 Alternatively, try it online from drive C of our [Atari ST in 3D](https://labs.mesmotronic.com/atari-st).
 
@@ -21,7 +21,6 @@ Press Esc to quit.
 
 1. Install [atarist-toolkit-docker](https://github.com/sidecartridge/atarist-toolkit-docker)
 1. Open the command line and navigate to the project directory
-1. Run `` export ST_WORKING_FOLDER=`pwd` ``
 1. Run `stcmd make` to compile the code
 1. Files will be created in the `build` folder
 
@@ -32,4 +31,4 @@ Press Esc to quit.
 
 ## License
 
-Released under [BSD 2-Clause License](LICENSE)
+Released under [GNU General Public License v3.0](LICENSE)
