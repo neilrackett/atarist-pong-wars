@@ -1,3 +1,6 @@
+# Copyright (C) 2026 Neil Rackett
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # Makefile for Atari ST Pong Wars
 # Uses libcmini to reduce file size from 132KB to 6KB
 
