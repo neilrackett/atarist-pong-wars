@@ -1,6 +1,10 @@
-<img width="1536" height="1024" alt="pongwars2-original" src="https://github.com/user-attachments/assets/2072fb87-1a93-4554-b6f4-3dbe827b7778" />
-
 # Pong Wars for Atari ST
+
+<img width="640" height="400" alt="pongwars2-original" src="https://github.com/user-attachments/assets/2072fb87-1a93-4554-b6f4-3dbe827b7778" />
+
+Self-playing game for Atari ST by [Neil Rackett](https://neilrackett.com/atarist)
+
+## Introduction
 
 The eternal battle between day and night, good and bad comes to the Atari ST!
 
